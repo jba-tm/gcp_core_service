@@ -4,7 +4,6 @@ from fastapi import Depends, Request, HTTPException
 from fastapi.security.utils import get_authorization_scheme_param
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from google.auth.exceptions import GoogleAuthError
 from google.oauth2 import id_token
@@ -48,7 +47,7 @@ async def get_google_id_token(request: Request):
 
 async def get_audience(token: str = Depends(get_google_id_token)) -> Optional[str]:
     if not settings.MULTI_TENANCY_DB:
-        return lazy_jwt_settings.JWT_AUDIENCE
+        return jwt_settings.JWT_AUDIENCE
     try:
         id_info = id_token.verify_oauth2_token(token, GoogleRequest())
     except GoogleAuthError as e:
@@ -59,7 +58,7 @@ async def get_audience(token: str = Depends(get_google_id_token)) -> Optional[st
     return audience
 
 
-async def get_async_db(audience: str = Depends(get_audience)) -> Generator[AsyncSession]:
+async def get_async_db(audience: str = Depends(get_audience)) -> Generator:
     async_session_local, _ = get_async_session(audience)
     try:
         async with async_session_local() as session:

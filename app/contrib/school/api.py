@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
 from app.core.schema import IResponseBase, IPaginationDataBase, CommonsModel
-from app.routers.dependency import get_async_session, get_commons
+from app.routers.dependency import get_async_db, get_commons
 from .schema import (
     SchoolBase, SchoolVisible, SchoolCreate,
 
@@ -19,7 +19,7 @@ api = APIRouter()
 
 @api.get('/', name='school-list', response_model=IPaginationDataBase[SchoolVisible])
 async def get_user_list(
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
         commons: CommonsModel = Depends(get_commons),
 
 ) -> dict:
@@ -34,10 +34,10 @@ async def get_user_list(
     }
 
 
-@api.post("/school/create/", tags=["schools"], name='school-create', response_model=IResponseBase[SchoolVisible])
+@api.post("/school/create/", tags=["schools"], name='school-create', response_model=IResponseBase[SchoolVisible], status_code=201)
 async def create_school(
         obj_in: SchoolCreate,
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
 
 ) -> dict:
     is_exists = await school_repo.exists(async_db=async_db, params={'name': obj_in.name})
@@ -61,7 +61,7 @@ async def create_school(
 @api.get("/school/{obj_id}/detail/", tags=["schools"], name='school-detail', response_model=SchoolVisible)
 async def get_single_school(
         obj_id: int,
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
 
 ):
     return await school_repo.get(async_db=async_db, obj_id=obj_id)
@@ -72,7 +72,7 @@ async def get_single_school(
 async def update_school(
         obj_id: int,
         obj_in: SchoolBase,
-        async_db: AsyncSession = Depends(get_async_session)
+        async_db: AsyncSession = Depends(get_async_db)
 ):
     db_obj = await school_repo.get(async_db=async_db, obj_id=obj_id)
     if obj_in.name:
@@ -109,7 +109,7 @@ async def update_school(
 async def delete_school(
 
         obj_id: int,
-        async_db: AsyncSession = Depends(get_async_session)
+        async_db: AsyncSession = Depends(get_async_db)
 ):
     db_obj = await school_repo.get(async_db=async_db, obj_id=obj_id)
 
@@ -127,7 +127,7 @@ async def delete_school(
          response_model=IPaginationDataBase[UserToSchoolVisible])
 async def user_to_school_list(
 
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
         commons: CommonsModel = Depends(get_commons),
 ) -> dict:
     obj_list = await user_to_school_repo.get_all(async_db=async_db, offset=commons.offset, limit=commons.limit)
@@ -142,10 +142,10 @@ async def user_to_school_list(
 
 
 @api.post("/user-to-group/create/", tags=['users', 'schools'], name='user-to-school-create',
-          response_model=IResponseBase[UserToSchoolVisible])
+          response_model=IResponseBase[UserToSchoolVisible], status_code=201)
 async def create_user_to_school(
         obj_in: UserToSchoolCreate,
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
 
 ) -> dict:
     is_exists = await user_to_school_repo.exists(
@@ -173,7 +173,7 @@ async def create_user_to_school(
          response_model=UserToSchoolVisible)
 async def get_single_user_to_school(
         obj_id: int,
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
 
 ):
     return await user_to_school_repo.get(async_db=async_db, obj_id=obj_id)
@@ -184,7 +184,7 @@ async def get_single_user_to_school(
 async def update_user_to_school(
         obj_id: int,
         obj_in: UserToSchoolBase,
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
 
 ):
     db_obj = await user_to_school_repo.get(async_db=async_db, obj_id=obj_id)
@@ -202,7 +202,7 @@ async def update_user_to_school(
 async def delete_user_to_school(
 
         obj_id: int,
-        async_db: AsyncSession = Depends(get_async_session)
+        async_db: AsyncSession = Depends(get_async_db)
 ):
     db_obj = await user_to_school_repo.get(async_db=async_db, obj_id=obj_id)
     try:

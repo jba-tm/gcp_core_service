@@ -30,5 +30,5 @@ class UserToSchool(Base):
     is_active: Mapped[bool] = mapped_column(sa.Boolean, default=True)
 
     __table_args__ = (
-        sa.UniqueConstraint('user_id', 'group_id', name='ux_user_id_school_id'),
+        sa.UniqueConstraint('user_id', 'school_id', name='ux_user_id_school_id'),
     )

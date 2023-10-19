@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
 from app.core.schema import IResponseBase, IPaginationDataBase, CommonsModel
-from app.routers.dependency import get_async_session, get_commons
+from app.routers.dependency import get_async_db, get_commons
 from .schema import (
     UserVisible, UserBase, UserCreate,
     GroupVisible, GroupBase, GroupCreate,
@@ -19,7 +19,7 @@ api = APIRouter()
 
 @api.get('/user/', tags=["users"], name='user-list', response_model=IPaginationDataBase[UserVisible])
 async def get_user_list(
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
         commons: CommonsModel = Depends(get_commons),
 
 ) -> dict:
@@ -34,11 +34,11 @@ async def get_user_list(
     }
 
 
-@api.post("/user/create/", tags=["users"], name='user-create', response_model=IResponseBase[UserVisible])
+@api.post("/user/create/", tags=["users"], name='user-create', response_model=IResponseBase[UserVisible],
+          status_code=201)
 async def create_user(
         obj_in: UserCreate,
-        async_db: AsyncSession = Depends(get_async_session),
-
+        async_db: AsyncSession = Depends(get_async_db),
 ) -> dict:
     is_exists = await user_repo.exists(async_db=async_db, params={'name': obj_in.name})
 
@@ -61,7 +61,7 @@ async def create_user(
 @api.get("/user/{obj_id}/detail/", tags=["users"], name='user-detail', response_model=UserVisible)
 async def get_single_user(
         obj_id: int,
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
 
 ):
     return await user_repo.get(async_db=async_db, obj_id=obj_id)
@@ -71,7 +71,7 @@ async def get_single_user(
 async def update_user(
         obj_id: int,
         obj_in: UserBase,
-        async_db: AsyncSession = Depends(get_async_session)
+        async_db: AsyncSession = Depends(get_async_db)
 ):
     db_obj = await user_repo.get(async_db=async_db, obj_id=obj_id)
     if obj_in.name:
@@ -107,7 +107,7 @@ async def update_user(
 async def delete_user(
 
         obj_id: int,
-        async_db: AsyncSession = Depends(get_async_session)
+        async_db: AsyncSession = Depends(get_async_db)
 ):
     db_obj = await user_repo.get(async_db=async_db, obj_id=obj_id)
 
@@ -123,7 +123,7 @@ async def delete_user(
 
 @api.get('/group/', name='group-list', tags=["groups"], response_model=IPaginationDataBase[GroupVisible])
 async def group_list(
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
         commons: CommonsModel = Depends(get_commons),
 
 ) -> dict:
@@ -137,10 +137,11 @@ async def group_list(
     }
 
 
-@api.post('/group/create/', name='group-create', tags=['groups'], response_model=IResponseBase[GroupVisible])
+@api.post('/group/create/', name='group-create', tags=['groups'], response_model=IResponseBase[GroupVisible],
+          status_code=201)
 async def group_create(
         obj_in: GroupCreate,
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
 ) -> dict:
     is_exists = await group_repo.exists(async_db=async_db, params={'name': obj_in.name})
 
@@ -164,7 +165,7 @@ async def group_create(
 @api.get("/group/{obj_id}/detail/", tags=["groups"], name='group-detail', response_model=GroupVisible)
 async def get_single_group(
         obj_id: int,
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
 
 ):
     return await group_repo.get(async_db=async_db, obj_id=obj_id)
@@ -177,7 +178,7 @@ async def get_single_group(
 async def update_group(
         obj_id: int,
         obj_in: GroupBase,
-        async_db: AsyncSession = Depends(get_async_session)
+        async_db: AsyncSession = Depends(get_async_db)
 ):
     db_obj = await group_repo.get(async_db=async_db, obj_id=obj_id)
     if obj_in.name:
@@ -212,7 +213,7 @@ async def update_group(
 @api.get('/group/{obj_id}/delete/', tags=["groups"], name='group-delete', response_model=IResponseBase[GroupVisible])
 async def delete_user(
         obj_id: int,
-        async_db: AsyncSession = Depends(get_async_session)
+        async_db: AsyncSession = Depends(get_async_db)
 ):
     db_obj = await group_repo.get(async_db=async_db, obj_id=obj_id)
 
@@ -230,7 +231,7 @@ async def delete_user(
          response_model=IPaginationDataBase[UserToGroupVisible])
 async def user_to_group_list(
 
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
         commons: CommonsModel = Depends(get_commons),
 ) -> dict:
     obj_list = await user_to_group_repo.get_all(async_db=async_db, offset=commons.offset, limit=commons.limit)
@@ -245,10 +246,10 @@ async def user_to_group_list(
 
 
 @api.post("/user-to-group/create/", tags=['users', 'groups'], name='user-to-group-create',
-          response_model=IResponseBase[UserToGroupVisible])
+          response_model=IResponseBase[UserToGroupVisible], status_code=201)
 async def create_user_to_group(
         obj_in: UserToGroupCreate,
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
 
 ) -> dict:
     is_exists = await user_to_group_repo.exists(
@@ -276,7 +277,7 @@ async def create_user_to_group(
          response_model=UserToGroupVisible)
 async def get_single_user_to_group(
         obj_id: int,
-        async_db: AsyncSession = Depends(get_async_session),
+        async_db: AsyncSession = Depends(get_async_db),
 
 ):
     return await user_to_group_repo.get(async_db=async_db, obj_id=obj_id)
@@ -287,7 +288,7 @@ async def get_single_user_to_group(
 async def delete_user_to_group(
 
         obj_id: int,
-        async_db: AsyncSession = Depends(get_async_session)
+        async_db: AsyncSession = Depends(get_async_db)
 ):
     db_obj = await user_to_group_repo.get(async_db=async_db, obj_id=obj_id)
     try:

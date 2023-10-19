@@ -40,4 +40,5 @@ def get_async_session(database: str):
         bind=async_engine,
         sync_session_class=session_local
     )
+
     return async_session_local, async_engine

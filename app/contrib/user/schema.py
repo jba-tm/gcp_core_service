@@ -9,7 +9,7 @@ from app.core.schema import BaseModel, VisibleBase
 class UserBase(BaseModel):
     name: str = Field(max_length=254)
     first_name: Optional[str] = Field(default="", max_length=254)
-    medium_name: Optional[str] = Field(default="", max_length=254)
+    middle_name: Optional[str] = Field(default="", max_length=254)
     last_name: Optional[str] = Field(default="", max_length=254)
 
     date_of_birth: Optional[date] = None
@@ -28,16 +28,17 @@ class UserCreate(UserBase):
 
 
 class UserVisible(VisibleBase):
+    id: int
     name: str
     created_at: datetime
     modified_at: Optional[datetime] = None
 
     first_name: Optional[str] = None
-    medium_name: Optional[str] = None
+    middle_name: Optional[str] = None
     last_name: Optional[str] = None
-    date_of_birth: Optional[date] = None
-    date_of_join: Optional[date] = None
-    date_of_left: Optional[date] = None
+    date_of_birth: Optional[date] = Field(None, examples=["2000-01-01"])
+    date_of_join: Optional[date] = Field(None, examples=["2000-01-01"])
+    date_of_left: Optional[date] = Field(None, examples=["2000-01-01"])
     business_email: Optional[EmailStr] = None
     personal_email: Optional[EmailStr] = None
     is_active: bool
@@ -52,6 +53,8 @@ class GroupCreate(GroupBase):
 
 
 class GroupVisible(VisibleBase):
+    id: int
+
     name: str
 
     created_at: datetime
@@ -64,5 +67,7 @@ class UserToGroupCreate(BaseModel):
 
 
 class UserToGroupVisible(VisibleBase):
+    id: int
+
     user_id: int
     group_id: int
