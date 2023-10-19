@@ -1,0 +1,16 @@
+.venv
+.idea
+__pycache__
+
+secrets.json
+.pytest_cache/
+
+.env.dev
+.env
+
+certs/
+
+
+.hosts
+
+*.db

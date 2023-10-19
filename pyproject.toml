@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "gcp-core-service"
+version = "0.1.0"
+description = ""
+authors = ["Your name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+asgi-lifespan = "^2.1.0"
+asgiref = "^3.7.2"
+cryptography = "^41.0.4"
+ecdsa = "^0.18.0"
+fastapi = "^0.104.0"
+gunicorn = "^21.2.0"
+httpx = "^0.25.0"
+loguru = "^0.7.2"
+orjson = "^3.9.9"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+pyasn1 = "^0.5.0"
+pydantic = "^2.4.2"
+pydantic-settings = "^2.0.3"
+pymysql = "^1.1.0"
+rsa = "^4.9"
+sqlalchemy = "^2.0.22"
+sqlalchemy-utils = "^0.41.1"
+tenacity = "^8.2.3"
+uvicorn = "^0.23.2"
+email-validator = "^2.0.0.post2"
+python-multipart = "^0.0.6"
+aiomysql = "^0.2.0"
+google-auth = "^2.23.3"
+google-auth-httplib2 = "^0.1.1"
+google-auth-oauthlib = "^1.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+faker = "^19.10.0"
+isort = "^5.12.0"
+mypy = "^1.6.1"
+pytest = "^7.4.2"
+pytest-asyncio = "^0.21.1"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.1"
+toml-sort = "^0.23.1"
+
+[tool.tomlsort]
+all = true
+ignore_case = true
+in_place = true
+no_header = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
